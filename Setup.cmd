@@ -2,10 +2,33 @@
 @powershell -noprofile -Window Hidden -c "$param='%*';$ScriptPath='%~f0';iex((Get-Content('%~f0') -Raw))"&exit/b
 #>
 
-$Title = "Win10+ Setup Disk - Windows To Go + $(Get-Date -Format 'dd-MM-yyyy HH:mm')"
+# ==============================================================================================
+#  PROJECT: Win10+ Setup Disk (IT Groceries Shop Edition)
+#  DESCRIPTION: Advanced Windows Setup & Windows To Go Creator
+# ==============================================================================================
+#  CREDITS & ORIGINS:
+#  - Base Logic Source: MyDigitalLife (MDL) Community
+#  - Win2Go/VHD Fork: https://github.com/abdullah-erturk/Win10-Setup-Disk-
+#  - Original Contributors: @rpo, @freddie-o, @BAU, @abbodi1406, @mephistooo2, @mustafa-gotr
+# ==============================================================================================
+#  MODIFIED BY: IT Groceries Shop (Jay)
+#  LAST UPDATE: 2025-12-27
+#  
+#  CUSTOMIZATIONS:
+#  1. [System] Implemented Real-time USB Auto-Scan (1000ms polling).
+#     - Enables application launch without USB device attached.
+#     - Auto-restores previous selection on re-connect.
+#  2. [Launcher] Added Integrated Web/Local Launcher logic.
+#  3. [UI] Custom Branding (Icon/Title) & UX Improvements.
+# ==============================================================================================
+
+# --- [Configuration] ---
+$Title = "Win10+ Setup Disk & Win2Go MOD BY: IT Groceries Shop"
 $Host.UI.RawUI.BackgroundColor = "Gray"
 $Host.UI.RawUI.ForegroundColor = "White"
 Clear-Host
+
+# ... (ต่อด้วยโค้ดส่วน Add-Type -AssemblyName System.Windows.Forms ได้เลยครับ) ...
 
 #   https://github.com/abdullah-erturk/
 #   https://github.com/abdullah-erturk/Win10-Setup-Disk-
@@ -673,12 +696,12 @@ $HowToTab.Controls.Add($HowToText)
 $TNCTRLinkLabel = New-Object System.Windows.Forms.LinkLabel -Property @{
     Location = New-Object System.Drawing.Point(230, 540) 
     Size = New-Object System.Drawing.Size(460, 20)
-    Text = "TNCTR"
+    Text = "ITG Blog"
     TextAlign = "MiddleCenter"
     LinkColor = [System.Drawing.Color]::White 
 }
 
-$TNCTRLinkLabel.Links.Add(0, $TNCTRLinkLabel.Text.Length, "https://www.tnctr.com/")
+$TNCTRLinkLabel.Links.Add(0, $TNCTRLinkLabel.Text.Length, "https://itgroceries.blogspot.com/")
 
 $TNCTRLinkLabel.Add_LinkClicked({
     param($sender, [System.Windows.Forms.LinkLabelLinkClickedEventArgs]$e)
@@ -693,7 +716,7 @@ $GithubLinkLabel = New-Object System.Windows.Forms.LinkLabel -Property @{
     LinkColor = [System.Drawing.Color]::White 
 }
 
-$GithubLinkLabel.Links.Add(0, $GithubLinkLabel.Text.Length, "https://github.com/abdullah-erturk")
+$GithubLinkLabel.Links.Add(0, $GithubLinkLabel.Text.Length, "https://github.com/itgroceries-sudo/Win10-SetupDisk")
 
 $GithubLinkLabel.Add_LinkClicked({
     param($sender, [System.Windows.Forms.LinkLabelLinkClickedEventArgs]$e)
@@ -1087,6 +1110,27 @@ $Form.Controls.Add($TabControl)
 $Form.Controls.Add($OutputTextBox)
 $Form.Controls.Add($MainProgressBar)
 $Form.Controls.Add($ProgressLabel)
+
+$OutputTextBox.AppendText("`r`nReady`r`nSelect ISO file and click the 'Create Disk' button.`r`n")
+$OutputTextBox.ScrollToCaret()
+
+$Form.Controls.Add($ProgressLabel)
+
+# ==========================================
+# [IT GROCERIES SHOP] ICON EMBEDDING SECTION
+# ==========================================
+$IconBase64 = "AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAQAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABGAAAAdgAAAHYAAABHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAm6YAAN/xAAD1/wAA//8AAPz/AADj/wAArOUAAACRAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA6OsAAPv/AADkpwAAAFcAAABnAAAAcQAAxZAAAP7aAAD7/wAASsoAAAAAAAAAAAAAAAAAAAAAAAAAAAAA9fYAAOTeAAAAAAAA3sEAAOf/AAD//wAA8f8AAM/5AAAAggAA/X0AAP//AABKygAAAAAAAAAAAAAAAAAA7swAAObtAAAAAAAAAAAAAPzBAAD//wAA//8AAP//AAD1/wAAAD8AAAAAAAD4gQAA/P8AAACRAAAAAAAAACAAAP//AAAAaAAAAAAAAAAAAAAAAAAA/f0AAP//AAD//wAApawAAAAAAAAAAAAAAAAAAP/ZAACq5gAAAAAAAPOjAADb8AAAAAAAAAAAAAAAAAAAAAAAAPZuAACUegAA2pcAAAAAAAAAAAAAAAAAAAAAAAD3gAAA4/8AAABHAAD1yAAAu9kAAAAAAAAAKwAAACwAAAARAAAEOgAA5/AAAI7bAAAAAAAAAAsAAAAsAAAAKgAAAAAAAPz/AAAAdQAA/9MAALbRAADruAAA4foAAOL5AACp5QAA5ZwAAP//AADo8AAAX2gAAOf2AADf+QAA2f0AAABiAAD//wAAAHUAAPq6AAC04wAA77YAAP//AAD//wAA9P8AAACfAAD+lAAAACwAAOfUAAD//wAA//8AAOn/AAAAWAAA9f8AAABGAAD5gAAA4f8AAAB6AAD//wAA//8AAP//AADDxwAAAAAAAAAAAAD//wAA//8AAP//AADT0AAA5KcAAN/xAAAAAAAAAAAAAP/8AAA3ygAA88AAAP//AADv/AAAABIAAAAAAAAAAAAA+LMAAP//AAD0/QAAACgAAPv+AACapgAAAAAAAAAAAAD4hAAA/f8AAACiAAD3yAAAw48AAAAAAAAAAAAAAAAAAAAAAAD53QAAAEoAAOXcAADo6wAAAAAAAAAAAAAAAAAAAAAAAPyqAAD9/wAAQcwAAABTAAAAAAAAAAAAAAAAAAAAAAAAAFcAAOXsAAD19gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA9oQAAP/8AADi/wAAuOgAALrWAAC62gAA2/AAAP//AADuzAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA+YAAAPq6AAD/0wAA9scAAPOjAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAA/D8AAPAPAADgBwAAyAMAAJgRAAAcOQAAPHgAACBEAAAAAAAAAAAAAAGBAACBgQAAg8MAAMPHAADgDwAA+B8AAA=="
+
+if ($IconBase64 -ne "") {
+    try {
+        $IconBytes = [Convert]::FromBase64String($IconBase64)
+        $IconStream = New-Object System.IO.MemoryStream($IconBytes, 0, $IconBytes.Length)
+        $Form.Icon = New-Object System.Drawing.Icon($IconStream)
+    } catch {
+        # กรณีรหัสผิดพลาด จะใช้ Icon มาตรฐานแทน ไม่ต้องแจ้งเตือน
+    }
+}
+# ==========================================
 
 $OutputTextBox.AppendText("`r`nReady`r`nSelect ISO file and click the 'Create Disk' button.`r`n")
 $OutputTextBox.ScrollToCaret()
