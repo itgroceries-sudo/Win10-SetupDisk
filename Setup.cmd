@@ -1126,12 +1126,8 @@ if ($IconBase64 -ne "") {
         $IconStream = New-Object System.IO.MemoryStream($IconBytes, 0, $IconBytes.Length)
         $Form.Icon = New-Object System.Drawing.Icon($IconStream)
     } catch {
-        # กรณีรหัสผิดพลาด จะใช้ Icon มาตรฐานแทน ไม่ต้องแจ้งเตือน
     }
 }
 # ==========================================
-
-$OutputTextBox.AppendText("`r`nReady`r`nSelect ISO file and click the 'Create Disk' button.`r`n")
-$OutputTextBox.ScrollToCaret()
 
 $Form.ShowDialog()
