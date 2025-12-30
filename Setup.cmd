@@ -1004,8 +1004,7 @@ $ClearAutoUnattendButton.Add_Click({
 	$ProgressLabel.Text = ""
 	$MainProgressBar.Visible = $False
 	$OutputTextBox.Clear()
-	$OutputTextBox.AppendText("`r`nReady`r`nSelect ISO file and click the 'Create Disk' button.`r`n")
-
+	
     # Reload USB disk list
     $USBDiskList.Items.Clear()
     $FromDiskDrive = Get-CimInstance Win32_DiskDrive | Where-Object {
