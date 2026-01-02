@@ -28,8 +28,6 @@ $Host.UI.RawUI.BackgroundColor = "Gray"
 $Host.UI.RawUI.ForegroundColor = "White"
 Clear-Host
 
-# ... (ต่อด้วยโค้ดส่วน Add-Type -AssemblyName System.Windows.Forms ได้เลยครับ) ...
-
 #   https://github.com/abdullah-erturk/
 #   https://github.com/abdullah-erturk/Win10-Setup-Disk-
 #   Contributors: @rpo, @freddie-o, @BAU & @abbodi1406, @mephistooo2, @mustafa-gotr (bensuslu11)
