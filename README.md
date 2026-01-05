@@ -7,7 +7,7 @@
 A modernized PowerShell script for creating **Windows Setup Disks** and **Windows To Go** drives.
 This project is a modified version (fork) of the popular MDL/GitHub script, enhanced with **Real-time USB Auto-Scan** and improved Launcher logic by **IT Groceries Shop**.
 
-<img width="496" height="598" alt="win10setupdisk" src="https://github.com/user-attachments/assets/f71d7fef-ea81-462e-b729-6ef5d5b378a4" />
+<img width="496" height="598" alt="win10setupdisk" src="https://github.com/user-attachments/assets/919eb40b-7660-4cbd-846e-221e3ee59e88" />
 
 ## 🚀 Quick Start
 
