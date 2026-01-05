@@ -159,19 +159,23 @@ Function Launch_Fido_Downloader {
 # FUNCTION: DOWNLOAD ISO (MANUAL - BROWSER SPOOF)
 # ---------------------------------------------------------
 Function Open_Browser_Spoof ($TargetUrl) {
-    # Fake iPad User-Agent to force direct ISO download link
     $UA = "Mozilla/5.0 (iPad; CPU OS 13_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/91.0.4472.77 Mobile/15E148 Safari/604.1"
     
+    $RandID = Get-Random
+    $TempProfile = "$env:TEMP\ITG_Browser_Spoof_$RandID"
+    New-Item -ItemType Directory -Path $TempProfile -Force | Out-Null
+
     $EdgePath = "$env:ProgramFiles(x86)\Microsoft\Edge\Application\msedge.exe"
     $ChromePath = "$env:ProgramFiles\Google\Chrome\Application\chrome.exe"
     
     if (Test-Path $EdgePath) {
-        Start-Process -FilePath $EdgePath -ArgumentList "--user-agent=""$UA"" ""$TargetUrl"""
+        Start-Process -FilePath $EdgePath -ArgumentList "--user-agent=""$UA"" --user-data-dir=""$TempProfile"" --no-first-run --no-default-browser-check ""$TargetUrl"""
     } elseif (Test-Path $ChromePath) {
-        Start-Process -FilePath $ChromePath -ArgumentList "--user-agent=""$UA"" ""$TargetUrl"""
+        Start-Process -FilePath $ChromePath -ArgumentList "--user-agent=""$UA"" --user-data-dir=""$TempProfile"" --no-first-run --no-default-browser-check ""$TargetUrl"""
     } else {
         Start-Process $TargetUrl
     }
+    
 }
 
 Function Launch_Browser_Downloader {
@@ -755,7 +759,7 @@ $HowToTab.Controls.Add($HowToText)
 $TNCTRLinkLabel = New-Object System.Windows.Forms.LinkLabel -Property @{
     Location = New-Object System.Drawing.Point(230, 540) 
     Size = New-Object System.Drawing.Size(460, 20)
-    Text = "ITG Blog"
+    Text = "Blog"
     TextAlign = "MiddleCenter"
     LinkColor = [System.Drawing.Color]::White 
 }
