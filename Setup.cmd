@@ -6,8 +6,8 @@
 #  PROJECT: Win10+ Setup Disk (IT Groceries Shop Edition)
 #  DESCRIPTION: Advanced Windows Setup & Windows To Go Creator
 # ==============================================================================================
-#  MODIFIED BY: IT Groceries Shop (Jay)
-#  LAST UPDATE: 2026-01-04 (Final Fix: Dropdown Logic)
+#  MODIFIED BY: IT Groceries Shop (TOE)
+#  LAST UPDATE: 2026-01-05 (Added VMD Drivers Tab)
 # ==============================================================================================
 
 # --- [Configuration] ---
@@ -156,6 +156,33 @@ Function Launch_Fido_Downloader {
 }
 
 # ---------------------------------------------------------
+# FUNCTION: DOWNLOAD VMD DRIVERS (PROJECT VMD)
+# ---------------------------------------------------------
+Function Launch_VMD_Project {
+    # [ITG] URL Updated to .ps1
+    $VMDUrl = "https://raw.githubusercontent.com/itgroceries-sudo/VMD-USB-Builder/main/USB_Builder.ps1" 
+    $VMDPath = "$env:TEMP\USB_Builder.ps1"
+
+    try {
+        $OutputTextBox.AppendText("Fetching VMD Drivers Project...`r`n")
+        $OutputTextBox.ScrollToCaret()
+        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+        Invoke-WebRequest -Uri $VMDUrl -OutFile $VMDPath -UseBasicParsing
+        
+        if (Test-Path $VMDPath) {
+            $OutputTextBox.AppendText("Launching VMD Installer...`r`n")
+            $OutputTextBox.ScrollToCaret()
+            # [FIX] Execute .ps1 using PowerShell engine
+            Start-Process PowerShell -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File `"$VMDPath`"" -Wait
+            $OutputTextBox.AppendText("VMD Installer finished.`r`n")
+        }
+    } catch {
+        Show_Error "Failed to fetch VMD Project. Check your internet or GitHub URL."
+    }
+    $OutputTextBox.ScrollToCaret()
+}
+
+# ---------------------------------------------------------
 # FUNCTION: DOWNLOAD ISO (MANUAL - BROWSER SPOOF)
 # ---------------------------------------------------------
 Function Open_Browser_Spoof ($TargetUrl) {
@@ -175,7 +202,6 @@ Function Open_Browser_Spoof ($TargetUrl) {
     } else {
         Start-Process $TargetUrl
     }
-    
 }
 
 Function Launch_Browser_Downloader {
@@ -634,7 +660,7 @@ Function Write_Additional_Files($usbntfs, $customPath, $bypassTPM) {
 
 # Base64 content for AutoUnattend.xml (Default Bypass)
 $base64AutoUnattend = @"
-PHVuYXR0ZW5kIHhtbG5zPSJ1cm46c2NoZW1hcy1taWNyb3NvZnQtY29tOnVuYXR0ZW5kIj4NCiAgPHNldHRpbmdzIHBhc3M9IndpbmRvd3NQRSI+PGNvbXBvbmVudCBuYW1lPSJNaWNyb3NvZnQtV2luZG93cy1TZXR1cCIgcHJvY2Vzc29yQXJjaGl0ZWN0dXJlPSJhbWQ2NCIgbGFuZ3VhZ2U9Im5ldXRyYWwiDQogICB4bWxuczp3Y209Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vV01JQ29uZmlnLzIwMDIvU3RhdGUiIHhtbG5zOnhzaT0iaHR0cDovL3d3dy53My5vcmcvMjAwMS9YTUxTY2hlbWEtaW5zdGFuY2UiDQogICBwdWJsaWNLZXlUb2tlbj0iMzFiZjM4NTZhZDM2NGUzNSIgdmVyc2lvblNjb3BlPSJub25TeFMiPg0KICAgIDxVc2VyRGF0YT48UHJvZHVjdEtleT48S2V5PkFBQUFBLVZWVlZWLUVFRUVFLVlZWVlZLU9PT09PPC9LZXk+PFdpbGxTaG93VUk+T25FcnJvcjwvV2lsbFNob3dVST48L1Byb2R1Y3RLZXk+PC9Vc2VyRGF0YT4NCiAgICA8Q29tcGxpYW5jZUNoZWNrPjxEaXNwbGF5UmVwb3J0Pk5ldmVyPC9EaXNwbGF5UmVwb3J0PjwvQ29tcGxpYW5jZUNoZWNrPjxEaWFnbm9zdGljcz48T3B0SW4+ZmFsc2U8L09wdEluPjwvRGlhZ25vc3RpY3M+DQogICAgPER5bmFtaWNVcGRhdGU+PEVuYWJsZT50cnVlPC9FbmFibGU+PFdpbGxTaG93VUk+TmV2ZXI8L1dpbGxTaG93VUk+PC9EeW5hbWljVXBkYXRlPjxFbmFibGVOZXR3b3JrPnRydWU8L0VuYWJsZU5ldHdvcms+DQogICAgPFJ1blN5bmNocm9ub3VzPg0KICAgICAgPCEtLSBTa2lwIDExIENoZWNrcyBvbiBCb290IHZpYSByZWcgLSB1bnJlbGlhYmxlIHZzIHdpbnNldHVwLmRsbCBwYXRjaCB1c2VkIGluIE1lZGlhQ3JlYXRpb25Ub29sLmJhdCAtLT4NCiAgICAgIDxSdW5TeW5jaHJvbm91c0NvbW1hbmQgd2NtOmFjdGlvbj0iYWRkIj48T3JkZXI+MTwvT3JkZXI+DQogICAgICAgIDxQYXRoPnJlZyBhZGQgSEtMTVxTWVNURU1cU2V0dXBcTGFiQ29uZmlnIC92IEJ5cGFzc1RQTUNoZWNrIC9kIDEgL3QgcmVnX2R3b3JkIC9mPC9QYXRoPjwvUnVuU3luY2hyb25vdXNDb21tYW5kPg0KICAgICAgPFJ1blN5bmNocm9ub3VzQ29tbWFuZCB3Y206YWN0aW9uPSJhZGQiPjxPcmRlcj4yPC9PcmRlcj4NCiAgICAgICAgPFBhdGg+cmVnIGFkZCBIS0xNXFNZU1RFTVxTZXR1cFxMYWJDb25maWcgL3YgQnlwYXNzU2VjdXJlQm9vdENoZWNrIC9kIDEgL3QgcmVnX2R3b3JkIC9mPC9QYXRoPjwvUnVuU3luY2hyb25vdXNDb21tYW5kPg0KICAgICAgPFJ1blN5bmNocm9ub3VzQ29tbWFuZCB3Y206YWN0aW9uPSJhZGQiPjxPcmRlcj4zPC9PcmRlcj4NCiAgICAgICAgPFBhdGg+cmVnIGFkZCBIS0xNXFNZU1RFTVxTZXR1cFxMYWJDb25maWcgL3YgQnlwYXNzUkFNQ2hlY2sgL2QgMSAvdCByZWdfZHdvcmQgL2Y8L1BhdGg+PC9SdW5TeW5jaHJvbm91c0NvbW1hbmQ+DQogICAgICA8UnVuU3luY2hyb25vdXNDb21tYW5kIHdjbTphY3Rpb249ImFkZCI+PE9yZGVyPjQ8L09yZGVyPg0KICAgICAgICA8UGF0aD5yZWcgYWRkIEhLTE1cU1lTVEVNXFNldHVwXExhYkNvbmZpZyAvdiBCeXBhc3NTdG9yYWdlQ2hlY2sgL2QgMSAvdCByZWdfZHdvcmQgL2Y8L1BhdGg+PC9SdW5TeW5jaHJvbm91c0NvbW1hbmQ+DQogICAgICA8UnVuU3luY2hyb25vdXNDb21tYW5kIHdjbTphY3Rpb249ImFkZCI+PE9yZGVyPjU8L09yZGVyPg0KICAgICAgICA8UGF0aD5yZWcgYWRkIEhLTE1cU1lTVEVNXFNldHVwXExhYkNvbmZpZyAvdiBCeXBhc3NDUFVDaGVjayAvZCAxIC90IHJlZ19kd29yZCAvZjwvUGF0aD48L1J1blN5bmNocm9ub3VzQ29tbWFuZD4NCiAgICA8L1J1blN5bmNocm9ub3VzPg0KICA8L2NvbXBvbmVudD48L3NldHRpbmdzPiAgDQogIDxzZXR0aW5ncyBwYXNzPSJzcGVjaWFsaXplIj48Y29tcG9uZW50IG5hbWU9Ik1pY3Jvc29mdC1XaW5kb3dzLURlcGxveW1lbnQiIHByb2Nlc3NvckFyY2hpdGVjdHVyZT0iYW1kNjQiIGxhbmd1YWdlPSJuZXV0cmFsIg0KICAgeG1sbnM6d2NtPSJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL1dNSUNvbmZpZy8yMDAyL1N0YXRlIiB4bWxuczp4c2k9Imh0dHA6Ly93d3cudzMub3JnLzIwMDEvWE1MU2NoZW1hLWluc3RhbmNlIg0KICAgcHVibGljS2V5VG9rZW49IjMxYmYzODU2YWQzNjRlMzUiIHZlcnNpb25TY29wZT0ibm9uU3hTIj4NCiAgICA8UnVuU3luY2hyb25vdXM+DQogICAgICA8IS0tIG9mZmxpbmUgbG9jYWwgYWNjb3VudCB2aWEgT09CRVxCWVBBU1NOUk8gb24gZXZlcnkgc2l0ZSBidXQgbGl0ZXJhbGx5IG5vIG9uZSBjcmVkaXRzIEF2ZVlvIGZvciBzaGFyaW5nIGl0IC0tPg0KICAgICAgPFJ1blN5bmNocm9ub3VzQ29tbWFuZCB3Y206YWN0aW9uPSJhZGQiPjxPcmRlcj4xPC9PcmRlcj4NCiAgICAgICAgPFBhdGg+cmVnIGFkZCBIS0xNXFNPRlRXQVJFXE1pY3Jvc29mdFxXaW5kb3dzXEN1cnJlbnRWZXJzaW9uXE9PQkUgL3YgQnlwYXNzTlJPIC90IHJlZ19kd29yZCAvZCAxIC9mPC9QYXRoPg0KICAgICAgPC9SdW5TeW5jaHJvbm91c0NvbW1hbmQ+DQogICAgICA8IS0tIGhpZGUgdW5zdXBwb3J0ZWQgbmFnIG9uIHVwZGF0ZSBzZXR0aW5ncyAtIDI1SDEgaXMgbm90IGEgdHlwbyA7KSAtLT4NCiAgICAgIDxSdW5TeW5jaHJvbm91c0NvbW1hbmQgd2NtOmFjdGlvbj0iYWRkIj48T3JkZXI+MjwvT3JkZXI+DQogICAgICAgIDxQYXRoPnJlZyBhZGQgSEtMTVxTT0ZUV0FSRVxQb2xpY2llc1xNaWNyb3NvZnRcV2luZG93c1xXaW5kb3dzVXBkYXRlIC92IFRhcmdldFJlbGVhc2VWZXJzaW9uIC9kIDEgL3QgcmVnX2R3b3JkIC9mPC9QYXRoPg0KICAgICAgPC9SdW5TeW5jaHJvbm91c0NvbW1hbmQ+DQogICAgICA8UnVuU3luY2hyb25vdXNDb21tYW5kIHdjbTphY3Rpb249ImFkZCI+PE9yZGVyPjM8L09yZGVyPg0KICAgICAgICA8UGF0aD5yZWcgYWRkIEhLTE1cU09GVFdBUkVcUG9saWNpZXNcTWljcm9zb2Z0XFdpbmRvd3NcV2luZG93c1VwZGF0ZSAvdiBUYXJnZXRSZWxlYXNlVmVyc2lvbkluZm8gL2QgMjVIMSAvZjwvUGF0aD4NCiAgICAgIDwvUnVuU3luY2hyb25vdXNDb21tYW5kPg0KICAgIDwvUnVuU3luY2hyb25vdXM+DQogIDwvY29tcG9uZW50Pjwvc2V0dGluZ3M+DQogIDxzZXR0aW5ncyBwYXNzPSJvb2JlU3lzdGVtIj48Y29tcG9uZW50IG5hbWU9Ik1pY3Jvc29mdC1XaW5kb3dzLVNoZWxsLVNldHVwIiBwcm9jZXNzb3JBcmNoaXRlY3R1cmU9ImFtZDY0IiBsYW5ndWFnZT0ibmV1dHJhbCIgDQogICB4bWxuczp3Y209Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vV01JQ29uZmlnLzIwMDIvU3RhdGUiIHhtbG5zOnhzaT0iaHR0cDovL3d3dy53My5vcmcvMjAwMS9YTUxTY2hlbWEtaW5zdGFuY2UiDQogICBwdWJsaWNLZXlUb2tlbj0iMzFiZjM4NTZhZDM2NGUzNSIgdmVyc2lvblNjb3BlPSJub25TeFMiPg0KICAgIDxPT0JFPg0KICAgICAgPEhpZGVMb2NhbEFjY291bnRTY3JlZW4+ZmFsc2U8L0hpZGVMb2NhbEFjY291bnRTY3JlZW4+PEhpZGVPbmxpbmVBY2NvdW50U2NyZWVucz5mYWxzZTwvSGlkZU9ubGluZUFjY291bnRTY3JlZW5zPg0KICAgICAgPEhpZGVXaXJlbGVzc1NldHVwSW5PT0JFPmZhbHNlPC9IaWRlV2lyZWxlc3NTZXR1cEluT09CRT48UHJvdGVjdFlvdXJQQz4zPC9Qcm90ZWN0WW91clBDPg0KICAgIDwvT09CRT4gIA0KICAgIDxGaXJzdExvZ29uQ29tbWFuZHM+DQogICAgICA8IS0tIGhpZGUgdW5zdXBwb3J0ZWQgbmFnIG9uIGRlc2t0b3AgLSBvcmlnaW5hbGx5IHNoYXJlZCBieSBhd3VjdGwgQCBNREwgLS0+DQogICAgICA8U3luY2hyb25vdXNDb21tYW5kIHdjbTphY3Rpb249ImFkZCI+PE9yZGVyPjE8L09yZGVyPg0KICAgICAgICA8Q29tbWFuZExpbmU+cmVnIGFkZCAiSEtDVVxDb250cm9sIFBhbmVsXFVuc3VwcG9ydGVkSGFyZHdhcmVOb3RpZmljYXRpb25DYWNoZSIgL3YgU1YxIC9kIDAgL3QgcmVnX2R3b3JkIC9mPC9Db21tYW5kTGluZT4NCiAgICAgIDwvU3luY2hyb25vdXNDb21tYW5kPjxTeW5jaHJvbm91c0NvbW1hbmQgd2NtOmFjdGlvbj0iYWRkIj48T3JkZXI+MjwvT3JkZXI+DQogICAgICAgIDxDb21tYW5kTGluZT5yZWcgYWRkICJIS0NVXENvbnRyb2wgUGFuZWxcVW5zdXBwb3J0ZWRIYXJkd2FyZU5vdGlmaWNhdGlvbkNhY2hlIiAvdiBTVjIgL2QgMCAvdCByZWdfZHdvcmQgL2Y8L0NvbW1hbmRMaW5lPg0KICAgICAgPC9TeW5jaHJvbm91c0NvbW1hbmQ+DQogICAgPC9GaXJzdExvZ29uQ29tbWFuZHM+DQogIDwvY29tcG9uZW50Pjwvc2V0dGluZ3M+DQo8L3VuYXR0ZW5kPg==
+PHVuYXR0ZW5kIHhtbG5zPSJ1cm46c2NoZW1hcy1taWNyb3NvZnQtY29tOnVuYXR0ZW5kIj4NCiAgPHNldHRpbmdzIHBhc3M9IndpbmRvd3NQRSI+PGNvbXBvbmVudCBuYW1lPSJNaWNyb3NvZnQtV2luZG93cy1TZXR1cCIgcHJvY2Vzc29yQXJjaGl0ZWN0dXJlPSJhbWQ2NCIgbGFuZ3VhZ2U9Im5ldXRyYWwiDQogICB4bWxuczp3Y209Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vV01JQ29uZmlnLzIwMDIvU3RhdGUiIHhtbG5zOnhzaT0iaHR0cDovL3d3dy53My5vcmcvMjAwMS9YTUxTY2hlbWEtaW5zdGFuY2UiDQogICBwdWJsaWNLZXlUb2tlbj0iMzFiZjM4NTZhZDM2NGUzNSIgdmVyc2lvblNjb3BlPSJub25TeFMiPg0KICAgIDxVc2VyRGF0YT48UHJvZHVjdEtleT48S2V5PkFBQUFBLVZWVlZWLUVFRUVFLVlZWVlZLU9PT09PPC9LZXk+PFdpbGxTaG93VUk+T25FcnJvcjwvV2lsbFNob3dVST48L1Byb2R1Y3RLZXk+PC9Vc2VyRGF0YT4NCiAgICA8Q29tcGxpYW5jZUNoZWNrPjxEaXNwbGF5UmVwb3J0Pk5ldmVyPC9EaXNwbGF5UmVwb3J0PjwvQ29tcGxpYW5jZUNoZWNrPjxEaWFnbm9zdGljcz48T3B0SW4+ZmFsc2U8L09wdEluPjwvRGlhZ25vc3RpY3M+DQogICAgPER5bmFtaWNVcGRhdGU+PEVuYWJsZT50cnVlPC9FbmFibGU+PFdpbGxTaG93VUk+TmV2ZXI8L1dpbGxTaG93VUk+PC9EeW5hbWljVXBkYXRlPjxFbmFibGVOZXR3b3JrPnRydWU8L0VuYWJsZU5ldHdvcms+DQogICAgPFJ1blN5bmNocm9ub3VzPg0KICAgICAgPCEtLSBTa2lwIDExIENoZWNrcyBvbiBCb290IHZpYSByZWcgLSB1bnJlbGlhYmxlIHZzIHdpbnNldHVwLmRsbCBwYXRjaCB1c2VkIGluIE1lZGlhQ3JlYXRpb25Ub29sLmJhdCAtLT4NCiAgICAgIDxSdW5TeW5jaHJvbm91c0NvbW1hbmQgd2NtOmFjdGlvbj0iYWRkIj48T3JkZXI+MTwvT3JkZXI+DQogICAgICAgIDxQYXRoPnJlZyBhZGQgSEtMTVxTWVNURU1cU2V0dXBcTGFiQ29uZmlnIC92IEJ5cGFzc1RQTUNoZWNrIC9kIDEgL3QgcmVnX2R3b3JkIC9mPC9QYXRoPjwvUnVuU3luY2hyb25vdXNDb21tYW5kPg0KICAgICAgPFJ1blN5bmNocm9ub3VzQ29tbWFuZCB3Y206YWN0aW9uPSJhZGQiPjxPcmRlcj4yPC9PcmRlcj4NCiAgICAgICAgPFBhdGg+cmVnIGFkZCBIS0xNXFNPRlRXQVJFXE1pY3Jvc29mdFxXaW5kb3dzXEN1cnJlbnRWZXJzaW9uXE9PQkUgL3YgQnlwYXNzTlJPIC90IHJlZ19kd29yZCAvZCAxIC9mPC9QYXRoPg0KICAgICAgPC9SdW5TeW5jaHJvbm91c0NvbW1hbmQ+DQogICAgPC9RunN5bmNocm9ub3VzPg0KICA8L2NvbXBvbmVudD48L3NldHRpbmdzPg0KPC91bmF0dGVuZD4=
 "@ -replace '\s',''
 
 # Base64 content for auto.cmd
@@ -717,10 +743,41 @@ $TabControl = New-Object System.Windows.Forms.TabControl -Property @{
 
 # Main tab
 $MainTab = New-Object System.Windows.Forms.TabPage -Property @{
-    Text = "Main Menu"
+    Text = "Setup Disk"
     BackColor = "Gray"
     ForeColor = "White"
 }
+
+# VMD Drivers Tab (NEW)
+$VMDTab = New-Object System.Windows.Forms.TabPage -Property @{
+    Text = "VMD Drivers"
+    BackColor = "Gray"
+    ForeColor = "White"
+}
+
+# VMD Tab Controls
+$VMDLabel = New-Object System.Windows.Forms.Label -Property @{
+    Location = New-Object System.Drawing.Point(20, 20)
+    Size = New-Object System.Drawing.Size(400, 40)
+    Text = "Download and Install Intel VMD Drivers automatically from IT Groceries GitHub Repository."
+    ForeColor = "White"
+    BackColor = "Gray"
+}
+
+$VMDDownloadBtn = New-Object System.Windows.Forms.Button -Property @{
+    Location = New-Object System.Drawing.Point(130, 80)
+    Size = New-Object System.Drawing.Size(200, 40)
+    Text = "Launch VMD Installer"
+    BackColor = "White"
+    ForeColor = "Black"
+}
+
+$VMDDownloadBtn.Add_Click({
+    Launch_VMD_Project
+})
+
+$VMDTab.Controls.Add($VMDLabel)
+$VMDTab.Controls.Add($VMDDownloadBtn)
 
 # How to use tab
 $HowToTab = New-Object System.Windows.Forms.TabPage -Property @{
@@ -1157,6 +1214,7 @@ $Wintogo.Add_CheckedChanged({
 })
 
 $TabControl.Controls.Add($MainTab)
+$TabControl.Controls.Add($VMDTab)
 $TabControl.Controls.Add($HowToTab)
 $MainTab.Controls.Add($WTGListBox)
 $MainTab.Controls.Add($WTGSelectButton)
